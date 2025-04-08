@@ -1,9 +1,20 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Code, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
 
 const Skills = () => {
+  const skillsRef = useRef(null);
+  const cardsRef = useRef([]);
+  cardsRef.current = [];
+
+  const addToRefs = (el) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
+
   const skillCategories = [
     {
       title: "Frontend Development",
@@ -23,23 +34,51 @@ const Skills = () => {
     }
   ];
   
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
+  useEffect(() => {
+    gsap.from(cardsRef.current, {
+      duration: 0.8,
+      opacity: 0,
+      y: 50,
+      stagger: 0.2,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: skillsRef.current,
+        start: "top 70%",
       }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  };
+    });
 
+    // Add hover effect for skill badges
+    const skillBadges = document.querySelectorAll('.skill-badge');
+    skillBadges.forEach(badge => {
+      badge.addEventListener('mouseenter', () => {
+        gsap.to(badge, {
+          scale: 1.1,
+          backgroundColor: '#2563eb',
+          color: 'white',
+          duration: 0.3
+        });
+      });
+      
+      badge.addEventListener('mouseleave', () => {
+        gsap.to(badge, {
+          scale: 1,
+          backgroundColor: '#f3f4f6',
+          color: '#1f2937',
+          duration: 0.3
+        });
+      });
+    });
+
+    return () => {
+      skillBadges.forEach(badge => {
+        badge.removeEventListener('mouseenter', () => {});
+        badge.removeEventListener('mouseleave', () => {});
+      });
+    };
+  }, []);
+  
   return (
-    <section id="skills" className="py-20 bg-gray-50">
+    <section id="skills" className="py-20 bg-gray-50" ref={skillsRef}>
       <div className="container mx-auto px-4">
         <motion.h2 
           className="section-title"
@@ -51,19 +90,12 @@ const Skills = () => {
           Skills
         </motion.h2>
         
-        <motion.div 
-          className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
           {skillCategories.map((category, index) => (
-            <motion.div 
+            <div 
               key={index} 
-              className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300"
-              variants={itemVariants}
-              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+              ref={addToRefs}
+              className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 transform-gpu"
             >
               <div className="flex items-center mb-4">
                 <Code className="text-tech-blue w-5 h-5 mr-2" />
@@ -72,20 +104,17 @@ const Skills = () => {
               
               <div className="flex flex-wrap">
                 {category.skills.map((skill, skillIndex) => (
-                  <motion.span 
+                  <span 
                     key={skillIndex} 
-                    className="skill-badge hover:bg-tech-blue hover:text-white transition-colors duration-300"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: skillIndex * 0.05 }}
+                    className="skill-badge hover:bg-tech-blue hover:text-white transition-all duration-300 cursor-default"
                   >
                     {skill}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
         
         <motion.div 
           className="mt-12 text-center"
@@ -98,35 +127,35 @@ const Skills = () => {
           <div className="flex flex-wrap justify-center gap-3">
             <motion.span 
               className="bg-tech-blue text-white px-5 py-2 rounded-full font-medium flex items-center"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5)" }}
               whileTap={{ scale: 0.95 }}
             >
               <Star className="w-4 h-4 mr-1" /> React.js
             </motion.span>
             <motion.span 
               className="bg-tech-blue text-white px-5 py-2 rounded-full font-medium flex items-center"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5)" }}
               whileTap={{ scale: 0.95 }}
             >
               <Star className="w-4 h-4 mr-1" /> React Native
             </motion.span>
             <motion.span 
               className="bg-tech-blue text-white px-5 py-2 rounded-full font-medium flex items-center"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5)" }}
               whileTap={{ scale: 0.95 }}
             >
               <Star className="w-4 h-4 mr-1" /> Node.js
             </motion.span>
             <motion.span 
               className="bg-tech-blue text-white px-5 py-2 rounded-full font-medium flex items-center"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5)" }}
               whileTap={{ scale: 0.95 }}
             >
               <Star className="w-4 h-4 mr-1" /> TypeScript
             </motion.span>
             <motion.span 
               className="bg-tech-blue text-white px-5 py-2 rounded-full font-medium flex items-center"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5)" }}
               whileTap={{ scale: 0.95 }}
             >
               <Star className="w-4 h-4 mr-1" /> Django REST
